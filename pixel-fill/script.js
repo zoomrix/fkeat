@@ -205,4 +205,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize the game when the page loads
     initGame();
+
+    // Back button functionality
+    backButton.addEventListener('click', () => {
+        window.location.href = 'https://fkeat.com/'; // Navigate to homepage
+    });
 });

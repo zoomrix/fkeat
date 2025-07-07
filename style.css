@@ -18,6 +18,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex-grow: 1; /* Make container grow to fill available space */
 }
 
 header {
@@ -39,6 +40,7 @@ header {
 
 main {
     width: 100%;
+    flex-grow: 1;
 }
 
 .game-grid {
@@ -48,59 +50,72 @@ main {
     justify-content: center;
 }
 
-.game-card {
-    background-color: #1a1a1a; /* Darker background for cards */
-    border: 2px solid white;
-    padding: 20px;
-    text-align: center;
+.game-link {
     text-decoration: none;
     color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.game-card {
+    width: 300px; /* Increased width for the card */
+    height: 200px; /* Increased height for the card */
+    border: 2px solid white;
+    background-color: #1a1a1a; /* Default background */
+    margin-bottom: 15px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     transition: transform 0.2s ease-in-out;
+    background-size: cover;
+    background-position: center;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
 }
 
 .game-card:hover {
     transform: translateY(-5px);
 }
 
-.game-thumbnail {
-    width: 150px;
-    height: 150px;
-    background-color: #333; /* Placeholder color */
-    border: 1px solid white;
-    margin-bottom: 15px;
+.game-card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* background-color: rgba(0, 0, 0, 0.5); /* Removed dark overlay */ */
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 18px;
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: crisp-edges;
 }
 
-.pixel-fill-thumbnail {
-    background-color: black; /* Pixel Fill's background */
-    position: relative;
-}
-
-.pixel-fill-thumbnail::before {
-    content: '';
-    position: absolute;
-    width: 80%;
-    height: 80%;
-    border: 2px solid white;
-    box-sizing: border-box;
+/* Specific background for Pixel Fill */
+.game-link:nth-child(1) .game-card {
+    background-image: url('images/pixel-fill-screen.png');
 }
 
 .game-title {
     font-size: 20px;
     margin: 0;
+    margin-top: 5px; /* Space between card and title */
 }
 
-.coming-soon .game-thumbnail::after {
+.coming-soon .game-card-overlay::after {
     content: '?';
-    font-size: 80px;
+    font-size: 80px; /* Adjusted font size to ensure centering */
     color: #666;
+    position: absolute; /* Absolute positioning */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centering trick */
+}
+
+.coming-soon .game-card {
+    background-color: #333; /* Placeholder background for coming soon */
+    background-image: none; /* No image for coming soon */
 }
