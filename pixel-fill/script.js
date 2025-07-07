@@ -354,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (backButton) { // Check if button exists before adding listener
         backButton.addEventListener('click', () => {
             console.log("Back button clicked!"); // Added log
-            window.location.href = '../index.html'; // Navigate to homepage
+            window.location.href = '../'; // Navigate to homepage
         });
     }
 });
