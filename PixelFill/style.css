@@ -1,0 +1,313 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: black;
+    font-family: 'Press Start 2P', cursive; /* A retro-style font */
+    color: white;
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+canvas {
+    border: 2px solid white;
+    background-color: black;
+    display: block;
+    /* Approximately 30% of viewport width, auto height for square */
+    width: 30vw;
+    height: 30vw;
+    max-width: 1024px;
+    max-height: 1024px;
+    image-rendering: pixelated; /* For crisp pixel scaling */
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+.progress-bar-container {
+    position: relative;
+    width: 30vw; /* Match canvas width */
+    max-width: 1024px;
+    height: 40px; /* Height for the progress bar */
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column; /* Stack text and bar */
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: 2px solid white; /* Add a border to the progress bar container */
+}
+
+.pixel-text-outline {
+    font-size: 30px;
+    color: white; /* Solid white text */
+    white-space: nowrap; /* Prevent text wrapping */
+    margin-bottom: 5px; /* Space between text and bar */
+    z-index: 1; /* Ensure it's above the bar */
+}
+
+.progress-bar-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 10px; /* Height of the actual filling bar */
+    background-color: white;
+    width: 0%; /* Controlled by JS */
+    z-index: 0; /* Behind the text */
+}
+
+.percentage-indicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 18px;
+    margin-top: -30px; /* Position above the progress bar */
+    margin-right: 5px;
+}
+
+.win-message {
+    position: absolute;
+    font-size: 40px;
+    color: white;
+    text-align: center;
+    display: none; /* Hidden by default */
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.dialog-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Dark overlay */
+    display: none; /* Hidden by default */
+    justify-content: center;
+    align-items: center;
+    z-index: 100; /* On top of everything */
+}
+
+.dialog-box {
+    border: 2px solid white;
+    background-color: black;
+    padding: 20px;
+    color: white;
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+    max-width: 400px;
+    width: 80%;
+    box-sizing: border-box;
+}
+
+.dialog-headline {
+    font-size: 24px;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.dialog-body p {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.dialog-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dialog-button {
+    font-size: 14px;
+    border: 1px solid white;
+    padding: 8px 15px;
+    cursor: pointer;
+    display: inline-block; /* For padding and border */
+}
+
+.instructions-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px; /* Space between instruction items */
+    margin-top: 30px;
+    width: 30vw; /* Match canvas width */
+    max-width: 1024px;
+}
+
+.instruction-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    text-align: center;
+}
+
+.instruction-text {
+    margin-top: 10px;
+}
+
+/* Diagram Styling */
+.key-button {
+    width: 30px;
+    height: 30px;
+    border: 2px solid white;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    color: white;
+    position: relative;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.arrow-keys-diagram {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 5px;
+    margin-top: 5px;
+}
+
+.arrow-key-button {
+    width: 30px;
+    height: 30px;
+    border: 2px solid white;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.arrow-key-button.up {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.arrow-key-button.left {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.arrow-key-button.down {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+.arrow-key-button.right {
+    grid-column: 3;
+    grid-row: 2;
+}
+
+/* Arrow shapes using borders */
+.arrow-key-button.up::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 8px solid white;
+    position: absolute;
+    top: 8px;
+}
+
+.arrow-key-button.down::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid white;
+    position: absolute;
+    bottom: 8px;
+}
+
+.arrow-key-button.left::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 8px solid white;
+    position: absolute;
+    left: 8px;
+}
+
+.arrow-key-button.right::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 8px solid white;
+    position: absolute;
+    right: 8px;
+}
+
+.space-bar-diagram {
+    width: 100px;
+    height: 30px;
+    border: 2px solid white;
+    background-color: black;
+    margin-top: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    color: white;
+}
+
+.shift-key-diagram {
+    width: 60px;
+    height: 30px;
+    border: 2px solid white;
+    background-color: black;
+    margin-top: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    color: white;
+}
+
+.plus-sign-diagram {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    margin: 0 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.plus-sign-diagram::before,
+.plus-sign-diagram::after {
+    content: '';
+    position: absolute;
+    background-color: white;
+}
+
+.plus-sign-diagram::before {
+    width: 100%;
+    height: 4px;
+}
+
+.plus-sign-diagram::after {
+    width: 4px;
+    height: 100%;
+}
