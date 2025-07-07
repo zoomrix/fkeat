@@ -19,7 +19,7 @@ body {
     position: relative;
 }
 
-canvas {
+#gameCanvas {
     border: 2px solid white;
     background-color: black;
     display: block;
@@ -153,10 +153,99 @@ canvas {
     font-family: 'Press Start 2P', cursive;
     font-size: 14px;
     text-align: center;
+    min-height: 120px; /* Increased height for more space */
+    justify-content: flex-start; /* Align items to the top */
+    position: relative; /* Added for absolute positioning of arrow */
 }
 
 .instruction-text {
-    margin-top: 10px;
+    margin-top: auto; /* Push text to the bottom of the available space */
+    margin-bottom: 10px; /* Space for the arrow */
+}
+
+.mode-arrow {
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 10px solid white; /* Upward pointing arrow */
+    position: absolute; /* Position absolutely */
+    bottom: 0; /* Align to the bottom of instruction-item */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust for its own width */
+    display: none; /* Hidden by default, controlled by JS */
+}
+
+/* Diagram Styling */
+.key-button {
+    width: 30px;
+    height: 30px;
+    border: 2px solid white;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    color: white;
+    position: relative;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.arrow-keys-diagram {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 5px;
+    margin-top: 5px;
+    height: 60px; /* Fixed height for arrow keys diagram */
+}
+
+.arrow-key-button {
+    width: 30px;
+    height: 30px;
+    border: 2px solid white;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.space-bar-diagram {
+    width: 100px;
+    height: 30px;
+    border: 2px solid white;
+    background-color: black;
+    margin-top: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    color: white;
+}
+
+.shift-key-diagram {
+    width: 60px;
+    height: 30px;
+    border: 2px solid white;
+    background-color: black;
+    margin-top: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    color: white;
+}
+
+.plus-sign-diagram {
+    width: 7px;
+    height: 7px;
+    position: relative;
+    margin: 0 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Diagram Styling */
@@ -334,4 +423,16 @@ canvas {
     border-top: 8px solid transparent;
     border-bottom: 8px solid transparent;
     border-right: 10px solid white; /* Left-pointing arrow */
+}
+
+#confettiCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* Make sure it doesn't interfere with mouse events */
+    z-index: 999; /* Just behind the back button but above everything else */
+    background-color: transparent;
+    border: none;
 }
