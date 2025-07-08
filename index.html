@@ -44,9 +44,80 @@
                 </div>
             </div>
         </main>
+        <div class="suggestion-container">
+            <form id="suggestion-form">
+                <label for="game-suggestion">What's the next game experiment?</label>
+                <input type="text" id="game-suggestion" name="game-suggestion" placeholder="Your game suggestion">
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        <div id="email-dialog" class="dialog-overlay" style="display: none;">
+            <div class="dialog-box">
+                <p>Thanks for your suggestion! Enter your email to get notified when the next game launches.</p>
+                <form id="email-form">
+                    <input type="email" id="user-email" name="user-email" placeholder="your.email@example.com" required>
+                    <button type="submit">Notify Me</button>
+                </form>
+                <button id="close-dialog">Close</button>
+            </div>
+        </div>
         <footer>
             <p>© 2025 FKEAT.com All rights reserved</p>
         </footer>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const suggestionForm = document.getElementById('suggestion-form');
+            const emailDialog = document.getElementById('email-dialog');
+            const emailForm = document.getElementById('email-form');
+            const closeDialogButton = document.getElementById('close-dialog');
+            const gameSuggestionInput = document.getElementById('game-suggestion');
+            const userEmailInput = document.getElementById('user-email');
+
+            // The URL you get from your n8n Webhook Trigger node
+            const n8nWebhookUrl = 'https://n8n-service-p6o5.onrender.com/webhook/d513f1ac-e5cd-4b18-9f69-21cf5dbf27e7';
+
+            suggestionForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (gameSuggestionInput.value.trim() !== '') {
+                    emailDialog.style.display = 'flex';
+                }
+            });
+
+            emailForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const userEmail = userEmailInput.value;
+                const gameSuggestion = gameSuggestionInput.value;
+
+                fetch(n8nWebhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        email: userEmail, 
+                        suggestion: gameSuggestion 
+                    }),
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Thanks! We will notify you.');
+                        emailDialog.style.display = 'none';
+                        gameSuggestionInput.value = ''; // Clear the input fields
+                        userEmailInput.value = '';
+                    } else {
+                        alert('Oops! Something went wrong. Please try again.');
+                    }
+                })
+                .catch(() => {
+                    alert('Oops! Something went wrong. Please try again.');
+                });
+            });
+
+            closeDialogButton.addEventListener('click', () => {
+                emailDialog.style.display = 'none';
+            });
+        });
+    </script>
 </body>
 </html>
