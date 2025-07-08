@@ -6,15 +6,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const winMessage = document.getElementById('win-message');
     const dialogOverlay = document.getElementById('dialog-overlay');
     const backButton = document.getElementById('back-button');
-    const speedModeArrow = document.getElementById('speed-mode-arrow'); // Added
-    const stickyModeArrow = document.getElementById('sticky-mode-arrow'); // Added
+    const speedModeArrow = document.getElementById('speed-mode-arrow');
+    const stickyModeArrow = document.getElementById('sticky-mode-arrow');
 
-    console.log("DOM Content Loaded. Script starting.");
-    console.log("Canvas: ", canvas);
-    console.log("Pixel Fill Progress: ", pixelFillProgress);
-    console.log("Back Button: ", backButton);
-    console.log("Speed Mode Arrow: ", speedModeArrow); // Added log
-    console.log("Sticky Mode Arrow: ", stickyModeArrow); // Added log
+    // Mobile controls
+    const dPadUp = document.getElementById('d-pad-up');
+    const dPadDown = document.getElementById('d-pad-down');
+    const dPadLeft = document.getElementById('d-pad-left');
+    const dPadRight = document.getElementById('d-pad-right');
+    const speedModeButton = document.getElementById('speed-mode-button');
+    const stickyModeButton = document.getElementById('sticky-mode-button');
+    const mobileSpeedModeArrow = document.getElementById('mobile-speed-mode-arrow');
+    const mobileStickyModeArrow = document.getElementById('mobile-sticky-mode-arrow');
+
 
     const gridSize = 64; // Internal game resolution (e.g., 64x64 pixels)
     const pixelSize = 1; // Each game pixel is 1 unit in our internal grid
@@ -122,7 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const cheatCodeInterval = 5000; // 5 seconds to enter the next key
 
     function initGame() {
-        console.log("initGame() called.");
         clearInterval(gameInterval); // Clear any existing interval if restarting
         grid = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0));
         playerX = Math.floor(gridSize / 2);
@@ -165,12 +168,13 @@ document.addEventListener('DOMContentLoaded', () => {
         pixelFillProgress.style.width = `${percentage}%`;
         percentageIndicator.textContent = `${Math.floor(percentage)}%`;
 
-        // Update arrow visibility
-        console.log("Updating UI. Continuous:", continuousMovementEnabled, "Sticky:", stickyMovementMode);
+        // Update arrow visibility for desktop
         speedModeArrow.style.display = continuousMovementEnabled ? 'block' : 'none';
         stickyModeArrow.style.display = stickyMovementMode ? 'block' : 'none';
-        console.log("Speed Mode Arrow display:", speedModeArrow.style.display);
-        console.log("Sticky Mode Arrow display:", stickyModeArrow.style.display);
+
+        // Update arrow visibility for mobile
+        mobileSpeedModeArrow.style.display = continuousMovementEnabled ? 'block' : 'none';
+        mobileStickyModeArrow.style.display = stickyMovementMode ? 'block' : 'none';
     }
 
     function checkWin() {
@@ -239,7 +243,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    
+    // Event Listeners for Mobile Controls
+    function handleDirectionalPress(direction) {
+        currentDirection = direction;
+        isArrowKeyPressed = true;
+        if (!continuousMovementEnabled && !stickyMovementMode) {
+            movePlayer();
+        }
+    }
+
+    function handleDirectionalRelease() {
+        if (!stickyMovementMode) {
+            isArrowKeyPressed = false;
+        }
+    }
+
+    dPadUp.addEventListener('touchstart', (e) => { e.preventDefault(); handleDirectionalPress('ArrowUp'); });
+    dPadDown.addEventListener('touchstart', (e) => { e.preventDefault(); handleDirectionalPress('ArrowDown'); });
+    dPadLeft.addEventListener('touchstart', (e) => { e.preventDefault(); handleDirectionalPress('ArrowLeft'); });
+    dPadRight.addEventListener('touchstart', (e) => { e.preventDefault(); handleDirectionalPress('ArrowRight'); });
+
+    dPadUp.addEventListener('touchend', handleDirectionalRelease);
+    dPadDown.addEventListener('touchend', handleDirectionalRelease);
+    dPadLeft.addEventListener('touchend', handleDirectionalRelease);
+    dPadRight.addEventListener('touchend', handleDirectionalRelease);
+
+    speedModeButton.addEventListener('click', () => {
+        continuousMovementEnabled = !continuousMovementEnabled;
+        stickyMovementMode = false;
+        if (continuousMovementEnabled) {
+            isArrowKeyPressed = false;
+        }
+        updateUI();
+    });
+
+    stickyModeButton.addEventListener('click', () => {
+        stickyMovementMode = !stickyMovementMode;
+        continuousMovementEnabled = false;
+        updateUI();
+    });
+
 
     document.addEventListener('keydown', (e) => {
         // Prevent default browser scrolling with arrow keys and spacebar
@@ -252,11 +295,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Handle Escape key for dialog toggle
         if (e.key === 'Escape' && !e.repeat) { // Only react to initial press of Escape
             if (dialogOverlay.style.display === 'none') {
-                console.log("Escape key pressed. Showing dialog.");
                 clearInterval(gameInterval); // Pause game
                 dialogOverlay.style.display = 'flex'; // Show dialog
             } else {
-                console.log("Escape key pressed. Hiding dialog.");
                 dialogOverlay.style.display = 'none'; // Hide dialog
                 gameInterval = setInterval(gameTick, gameSpeed); // Resume game
             }
@@ -265,7 +306,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Handle Enter key for dialog restart
         if (e.key === 'Enter' && dialogOverlay.style.display === 'flex') { // Only react if dialog is visible
-            console.log("Enter key pressed. Restarting game.");
             initGame(); // Restart game
             return; // Stop further processing for Enter key
         }
@@ -280,7 +320,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Check if the current sequence matches the cheat code
         if (playerInputSequence.length === cheatCodeSequence.length &&
             playerInputSequence.every((value, index) => value === cheatCodeSequence[index])) {
-            console.log("Cheat Code Activated!");
             // Animate filling the entire canvas line by line
             let currentRow = 0;
             const fillAnimationInterval = setInterval(() => {
@@ -305,7 +344,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reset cheat code sequence if next key is not pressed in time
         cheatCodeTimer = setTimeout(() => {
             playerInputSequence = [];
-            console.log("Cheat code sequence reset.");
         }, cheatCodeInterval);
 
         // Handle movement keys only if dialog is not visible
@@ -313,8 +351,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.key === ' ' && e.shiftKey) { // Shift + Spacebar for sticky movement
                 stickyMovementMode = !stickyMovementMode;
                 continuousMovementEnabled = false; // Ensure other mode is off
-                console.log("Sticky Movement Mode: " + (stickyMovementMode ? "ON" : "OFF"));
-                console.log("Continuous Movement: " + (continuousMovementEnabled ? "ON" : "OFF"));
                 updateUI(); // Update UI immediately after mode change
             } else if (e.key === ' ') { // Spacebar for continuous movement
                 continuousMovementEnabled = !continuousMovementEnabled;
@@ -322,8 +358,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (continuousMovementEnabled) {
                     isArrowKeyPressed = false; // Reset key pressed state for continuous mode
                 }
-                console.log("Continuous Movement: " + (continuousMovementEnabled ? "ON" : "OFF"));
-                console.log("Sticky Movement Mode: " + (stickyMovementMode ? "ON" : "OFF"));
                 updateUI(); // Update UI immediately after mode change
             } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
                 currentDirection = e.key;
@@ -353,7 +387,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Back button functionality
     if (backButton) { // Check if button exists before adding listener
         backButton.addEventListener('click', () => {
-            console.log("Back button clicked!"); // Added log
             window.location.href = '../'; // Navigate to homepage
         });
     }

@@ -28,7 +28,7 @@
         </div>
         <div class="percentage-indicator" id="percentage-indicator">0%</div>
         <canvas id="gameCanvas"></canvas>
-        <div class="instructions-container">
+        <div class="instructions-container desktop-only">
             <div class="instruction-item">
                 <div class="arrow-keys-diagram">
                     <div class="arrow-key-button up"></div>
@@ -49,6 +49,24 @@
                 <div class="key-button space-bar-diagram">SPACEBAR</div>
                 <span class="instruction-text">STICKY MODE</span>
                 <div class="mode-arrow" id="sticky-mode-arrow"></div>
+            </div>
+        </div>
+        <div class="mobile-controls-container">
+            <div class="d-pad-container">
+                <div class="d-pad-button up" id="d-pad-up"></div>
+                <div class="d-pad-button left" id="d-pad-left"></div>
+                <div class="d-pad-button down" id="d-pad-down"></div>
+                <div class="d-pad-button right" id="d-pad-right"></div>
+            </div>
+            <div class="mode-buttons-container">
+                <div class="mode-button" id="speed-mode-button">
+                    <span>SPEED</span>
+                    <div class="mode-arrow" id="mobile-speed-mode-arrow"></div>
+                </div>
+                <div class="mode-button" id="sticky-mode-button">
+                    <span>STICKY</span>
+                    <div class="mode-arrow" id="mobile-sticky-mode-arrow"></div>
+                </div>
             </div>
         </div>
         <div class="win-message" id="win-message">YOU WON!</div>
